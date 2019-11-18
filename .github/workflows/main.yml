@@ -15,5 +15,15 @@ jobs:
       run: |
         cd ..
         find .
-        https://github.com/mongodb/mongo-c-driver.git
-        https://github.com/mongodb/mongo-cxx-driver.git
+        git clone https://github.com/mongodb/mongo-c-driver.git
+        git clone https://github.com/mongodb/mongo-cxx-driver.git
+        mkdir -p mongo-c-driver/cmake_build mongo-cxx-driver/cmake_build
+        cd mongo-c-driver/cmake_build
+        cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
+        sudo make install -j$(nproc)
+        cd ../mongo-cxx-driver/cmake_build
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local ..
+        make EP_mnmlstc_core
+        make -j$(nproc)
+        sudo make install
+
