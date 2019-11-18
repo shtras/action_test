@@ -13,5 +13,7 @@ jobs:
       run: find .
     - name: Run a multi-line script
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+        cd ..
+        find .
+        https://github.com/mongodb/mongo-c-driver.git
+        https://github.com/mongodb/mongo-cxx-driver.git
