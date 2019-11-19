@@ -15,37 +15,31 @@ jobs:
         cd /home/runner/work/
     - name: Pwd persistency check
       run: pwd
-    
-    - name: Cache usr local
+    - name: Cache drivers
       uses: actions/cache@v1
       with:
-        path: /usr/local
-        key: usr-local
+        path: /opt/mongo
+        key: mongo-drivers
     - name: Build mongo c
       run: |
-        cd /home/runner/work/
-        if [[ ! -e /home/runner/work/mongo-c-driver ]] ; then
+        if [[ ! -e /opt/mongo ]] ; then
+          mkdir -p /opt/mongo
+          cd /home/runner/work/
           git clone https://github.com/mongodb/mongo-c-driver.git
           mkdir -p /home/runner/work/mongo-c-driver/cmake_build
           cd /home/runner/work/mongo-c-driver/cmake_build
-          cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
-        fi
-        cd /home/runner/work/mongo-c-driver/cmake_build
-        make
-        sudo make install -j$(nproc)
-    - name: Build mongo cxx
-      run: |
-        cd /home/runner/work/
-        if [[ ! -e /home/runner/work/mongo-cxx-driver ]] ; then
+          cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DCMAKE_INSTALL_PREFIX=/opt/mongo/mongo-c-driver -D ..
+          make
+          sudo make install -j$(nproc)
+          cd /home/runner/work/
           git clone https://github.com/mongodb/mongo-cxx-driver.git
           mkdir -p /home/runner/work/mongo-cxx-driver/cmake_build
           cd /home/runner/work/mongo-cxx-driver/cmake_build
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/mongo/mongo-cxx-driver -DCMAKE_PREFIX_PATH=/opt/mongo/mongo-c-driver ..
           sudo make EP_mnmlstc_core
           make -j$(nproc)
+          sudo make install
         fi
-        cd /home/runner/work/mongo-cxx-driver/cmake_build
-        sudo make install
     - name: Apt install
       run: sudo apt-get -y install libboost-system-dev libssl-dev
     - name: Build potions
@@ -56,6 +50,6 @@ jobs:
         git checkout univer_expansion
         mkdir build
         cd build
-        cmake ..
+        cmake -DENABLE_TESTS=1 -DCMAKE_PREFIX_PATH=/opt/mongo/mongo-cxx-driver ..
         cmake --build .
 
