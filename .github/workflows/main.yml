@@ -48,6 +48,7 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local ..
         sudo make EP_mnmlstc_core
         make -j$(nproc)
+        sudo make uninstall
         sudo make install
     - name: Apt install
       run: sudo apt-get -y install libboost-system-dev libssl-dev
