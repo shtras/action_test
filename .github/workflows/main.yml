@@ -11,24 +11,48 @@ jobs:
     - uses: actions/checkout@v1
     - name: List files
       run: |
-        find .
         pwd
+        cd /home/runner/work/
+    - name: Pwd persistency check
+      run: pwd
+    - name: Cache cxx drivers
+      uses: actions/cache@v1
+      with:
+        path: /home/runner/work/mongo-cxx-driver
+        key: mongo-cxx-driver
+    - name: Cache c drivers
+      uses: actions/cache@v1
+      with:
+        path: /home/runner/work/mongo-c-driver
+        key: mongo-c-driver
     - name: Run a multi-line script
       run: |
-        cd ..
-        find .
-        git clone https://github.com/mongodb/mongo-c-driver.git
-        git clone https://github.com/mongodb/mongo-cxx-driver.git
-        mkdir -p mongo-c-driver/cmake_build mongo-cxx-driver/cmake_build
-        cd mongo-c-driver/cmake_build
-        cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
+        cd /home/runner/work/
+        if [[ ! -f /home/runner/work/mongo-c-driver ]] ; then
+          git clone https://github.com/mongodb/mongo-c-driver.git
+          mkdir -p /home/runner/work/mongo-c-driver/cmake_build
+          cd /home/runner/work/mongo-c-driver/cmake_build
+          cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
+          make
+        fi
+
+        cd /home/runner/work/mongo-c-driver/cmake_build
         sudo make install -j$(nproc)
-        cd ../../mongo-cxx-driver/cmake_build
-        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local ..
-        sudo make EP_mnmlstc_core
-        make -j$(nproc)
+
+        if [[ ! -f /home/runner/work/mongo-cxx-driver ]] ; then
+          git clone https://github.com/mongodb/mongo-cxx-driver.git
+          mkdir -p /home/runner/work/mongo-cxx-driver/cmake_build
+          cd /home/runner/work/mongo-cxx-driver/cmake_build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local ..
+          sudo make EP_mnmlstc_core
+          make -j$(nproc)
+        fi
+
+        cd /home/runner/work/mongo-cxx-driver/cmake_build
         sudo make install
-        cd ../..
+        
+        sudo apt-get -y install libboost-system-dev libssl-dev
+        cd /home/runner/work/
         git clone https://github.com/shtras/Potions
         cd Potions
         mkdir build
