@@ -57,6 +57,7 @@ jobs:
         cd /home/runner/work/
         git clone https://github.com/shtras/Potions
         cd Potions
+        git checkout univer_expansion
         mkdir build
         cd build
         cmake ..
