@@ -28,7 +28,7 @@ jobs:
           git clone https://github.com/mongodb/mongo-c-driver.git
           mkdir -p /home/runner/work/mongo-c-driver/cmake_build
           cd /home/runner/work/mongo-c-driver/cmake_build
-          cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DCMAKE_INSTALL_PREFIX=/opt/mongo/mongo-c-driver -D ..
+          cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DCMAKE_INSTALL_PREFIX=/opt/mongo/mongo-c-driver ..
           make
           sudo make install -j$(nproc)
           cd /home/runner/work/
