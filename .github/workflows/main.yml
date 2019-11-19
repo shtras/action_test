@@ -10,7 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: List files
-      run: find .
+      run: |
+        find .
+        pwd
     - name: Run a multi-line script
       run: |
         cd ..
@@ -21,7 +23,7 @@ jobs:
         cd mongo-c-driver/cmake_build
         cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF ..
         sudo make install -j$(nproc)
-        cd ../mongo-cxx-driver/cmake_build
+        cd ../../mongo-cxx-driver/cmake_build
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local ..
         make EP_mnmlstc_core
         make -j$(nproc)
