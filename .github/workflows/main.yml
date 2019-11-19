@@ -25,7 +25,14 @@ jobs:
         sudo make install -j$(nproc)
         cd ../../mongo-cxx-driver/cmake_build
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local ..
-        make EP_mnmlstc_core
+        sudo make EP_mnmlstc_core
         make -j$(nproc)
         sudo make install
+        cd ../..
+        git clone https://shtras.com/Potions
+        cd Potions
+        mkdir build
+        cd build
+        cmake ..
+        cmake --build .
 
