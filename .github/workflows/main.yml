@@ -25,10 +25,10 @@ jobs:
       with:
         path: /home/runner/work/mongo-c-driver
         key: mongo-c-driver
-    - name: Run a multi-line script
+    - name: Build mongo c
       run: |
         cd /home/runner/work/
-        if [[ ! -f /home/runner/work/mongo-c-driver ]] ; then
+        if [[ ! -e /home/runner/work/mongo-c-driver ]] ; then
           git clone https://github.com/mongodb/mongo-c-driver.git
           mkdir -p /home/runner/work/mongo-c-driver/cmake_build
           cd /home/runner/work/mongo-c-driver/cmake_build
@@ -39,7 +39,10 @@ jobs:
         cd /home/runner/work/mongo-c-driver/cmake_build
         sudo make install -j$(nproc)
 
-        if [[ ! -f /home/runner/work/mongo-cxx-driver ]] ; then
+    - name: Build mongo cxx
+      run: |
+        cd /home/runner/work/
+        if [[ ! -e /home/runner/work/mongo-cxx-driver ]] ; then
           git clone https://github.com/mongodb/mongo-cxx-driver.git
           mkdir -p /home/runner/work/mongo-cxx-driver/cmake_build
           cd /home/runner/work/mongo-cxx-driver/cmake_build
@@ -47,10 +50,11 @@ jobs:
           sudo make EP_mnmlstc_core
           make -j$(nproc)
         fi
-
         cd /home/runner/work/mongo-cxx-driver/cmake_build
         sudo make install
-        
+
+    - name: Build potions
+      run: |
         sudo apt-get -y install libboost-system-dev libssl-dev
         cd /home/runner/work/
         git clone https://github.com/shtras/Potions
